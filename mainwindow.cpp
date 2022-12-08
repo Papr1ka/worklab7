@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "sorts.h"
+#include "tools.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -13,6 +14,13 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::clear_counters()
+{
+    ui->label_avg->clear();
+    ui->label_max->clear();
+    ui->label_min->clear();
 }
 
 void MainWindow::setTable(int size)
@@ -50,6 +58,7 @@ void MainWindow::setTable(int size)
     }
     ui->label_iterations->clear();
     ui->label_swipes->clear();
+    this->clear_counters();
 }
 
 void MainWindow::on_lineEdit_size_editingFinished()
@@ -77,7 +86,7 @@ void MainWindow::on_pushButton_set_size_200_clicked()
 
 bool MainWindow::check()
 {
-    if (this->size == 0)
+    if (this->size <= 0)
     {
         QMessageBox::information(this, "Ошибка", "Программе не с чем работать");
         return false;
@@ -110,6 +119,9 @@ void MainWindow::on_pushButton_set_size_random_clicked()
 
         ui->tableWidget->scrollToItem(ui->tableWidget->item(0, 0));
     }
+    ui->label_iterations->clear();
+    ui->label_swipes->clear();
+    this->clear_counters();
 }
 
 bool MainWindow::check_numbers()
@@ -129,41 +141,42 @@ bool MainWindow::check_numbers()
     return true;
 }
 
-std::pair<int, int> quick_sort_container(int size, int *array_ptr)
+void quick_sort_container(int size, int *array_ptr, int *iterations, int *swipes)
 {
-    quick_sort(array_ptr, 0, size - 1);
-    return std::pair<int, int>(0, 0);
+    quick_sort(array_ptr, 0, size - 1, iterations, swipes);
 }
 
-void MainWindow::table_function( std::pair<int, int> (*func)(int size, int *array_ptr) )
+void MainWindow::table_function( void (*func)(int size, int *array_ptr, int *iterations, int *swipes) )
 {
     if (this->check() && this->check_numbers())
     {
         this->swipes = 0;
         this->iterations = 0;
-        auto p = func(this->size, this->array);
+        func(this->size, this->array, &this->iterations, &this->swipes);
         for (int i = 0; i < this->size; i++)
         {
             ui->tableWidget->item(0, i)->setText(QString::number(this->array[i]));
         }
-        if (func == &quick_sort_container)
-        {
-            ui->label_swipes->setText("Не определено для быстрой сортировки");
-            ui->label_iterations->setText("Не определено для быстрой сортировки");
-        }
-        else
-        {
-            ui->label_swipes->setText(QString::number(p.first));
-            ui->label_iterations->setText(QString::number(p.second));
-        }
+        ui->label_swipes->setText(QString::number(this->iterations));
+        ui->label_iterations->setText(QString::number(this->swipes));
         if (func == &makaka_sort)
         {
-            if (p.first == 1000)
+            if (this->swipes >= 1000)
             {
                 QMessageBox::information(this, "Ошибка", "Обезьянки не справились за 1000 попыток");
             }
         }
     }
+}
+
+QString MainWindow::table_function(int (*func)(int, int *))
+{
+    if (this->check() && this->check_numbers())
+    {
+        int value = func(this->size, this->array);
+        return QString::number(value);
+    }
+    return "";
 }
 
 void MainWindow::on_pushButton_bubble_clicked()
@@ -213,5 +226,26 @@ void MainWindow::on_tableWidget_itemChanged(QTableWidgetItem *item)
         item->setBackground(Qt::white);
         this->array[item->column()] = number;
     }
+    ui->label_iterations->clear();
+    ui->label_swipes->clear();
+    this->clear_counters();
+}
+
+
+void MainWindow::on_pushButton_min_clicked()
+{
+    ui->label_min->setText(this->table_function(min));
+}
+
+
+void MainWindow::on_pushButton_max_clicked()
+{
+    ui->label_max->setText(this->table_function(max));
+}
+
+
+void MainWindow::on_pushButton_avg_clicked()
+{
+    ui->label_avg->setText(this->table_function(avg));
 }
 
