@@ -11,11 +11,13 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    sorts.cpp
+    sorts.cpp \
+    tools.cpp
 
 HEADERS += \
     mainwindow.h \
-    sorts.h
+    sorts.h \
+    tools.h
 
 FORMS += \
     mainwindow.ui

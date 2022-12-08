@@ -5,6 +5,9 @@
 #include <QMessageBox>
 #include <QTableWidgetItem>
 #include <windows.h>
+#include <iostream>
+
+using namespace std;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -39,6 +42,12 @@ private slots:
 
     void on_tableWidget_itemChanged(QTableWidgetItem *item);
 
+    void on_pushButton_min_clicked();
+
+    void on_pushButton_max_clicked();
+
+    void on_pushButton_avg_clicked();
+
 private:
     Ui::MainWindow *ui;
     int array[200];
@@ -50,6 +59,9 @@ private:
     bool check_numbers();
 
     void setTable(int size);
-    void table_function( std::pair<int, int> (*function) (int size, int *array_prt));
+    void table_function( void (*function) (int size, int *array_prt, int *iterations, int *swipes));
+    void clear_counters();
+
+    QString table_function( int (*function) (int size, int *array_ptr));
 };
 #endif // MAINWINDOW_H

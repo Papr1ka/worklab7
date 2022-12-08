@@ -1,19 +1,17 @@
 #include "sorts.h"
 
-std::pair<int, int> makaka_sort(int size, int *array_ptr)
+void makaka_sort(int size, int *array_ptr, int *iterations, int *swipes)
 {
     bool sorted = false;
     int pos1, pos2;
     int temp;
     int counter = 0;
-    int iterations = 0;
-    int swipes = 0;
     while (counter < 1000)
     {
         sorted = true;
         for (int i = 0; i < size - 1; i++)
         {
-            iterations++;
+            *iterations += 1;
             if (array_ptr[i] > array_ptr[i + 1])
             {
                 sorted = false;
@@ -26,25 +24,24 @@ std::pair<int, int> makaka_sort(int size, int *array_ptr)
         }
         else
         {
-            iterations++;
+            *iterations += 1;
             pos1 = rand() % size;
             pos2 = rand() % size;
             temp = array_ptr[pos1];
             array_ptr[pos1] = array_ptr[pos2];
             array_ptr[pos2] = temp;
-            swipes++;
+            *swipes += 1;
         }
         counter++;
     }
     if (counter >= 1000)
     {
-        swipes = 1000;
+        *swipes = 1000;
     }
-    return std::pair<int, int>(swipes, iterations);
 }
 
 
-void quick_sort(int *numbers, int left, int right)
+void quick_sort(int *numbers, int left, int right, int *iterations, int *swipes)
 {
     int pivot;
     int l_hold = left;
@@ -56,23 +53,28 @@ void quick_sort(int *numbers, int left, int right)
         while ((numbers[right] >= pivot) && (left < right))
         {
             right--;
+            *iterations += 1;
         }
 
         if (left != right)
         {
             numbers[left] = numbers[right];
             left++;
+            *swipes += 1;
         }
 
         while ((numbers[left] <= pivot) && (left < right))
         {
             left++;
+            *iterations += 1;
         }
 
         if (left != right)
         {
             numbers[right] = numbers[left];
             right--;
+            *swipes += 1;
+            *iterations += 1;
         }
     }
 
@@ -83,20 +85,18 @@ void quick_sort(int *numbers, int left, int right)
 
     if (left < pivot)
     {
-        quick_sort(numbers, left, pivot - 1);
+        quick_sort(numbers, left, pivot - 1, iterations, swipes);
     }
     if (right > pivot)
     {
-        quick_sort(numbers, pivot + 1, right);
+        quick_sort(numbers, pivot + 1, right, iterations, swipes);
     }
 }
 
 
-std::pair<int, int> bubble_sort(int size, int *array_ptr)
+void bubble_sort(int size, int *array_ptr, int *iterations, int *swipes)
 {
     int temp;
-    int swipes = 0;
-    int iterations = 0;
     for (int i = size; i > 0; i--)
     {
         for (int j = 0; j < i - 1; j++)
@@ -106,27 +106,24 @@ std::pair<int, int> bubble_sort(int size, int *array_ptr)
                 temp = array_ptr[j];
                 array_ptr[j] = array_ptr[j + 1];
                 array_ptr[j + 1] = temp;
-                swipes++;
+                *swipes += 1;
             }
-            iterations++;
+            *iterations += 1;
         }
     }
-    return std::pair<int, int>(swipes, iterations);
 }
 
 
-std::pair<int, int> gnome_sort(int size, int *array_ptr)
+void gnome_sort(int size, int *array_ptr, int *iterations, int *swipes)
 {
     int i = 0;
-    int swipes = 0;
-    int iterations = 0;
     int temp;
     while (i < size - 1)
     {
-        iterations++;
+        *iterations += 1;
         if (array_ptr[i] > array_ptr[i + 1])
         {
-            swipes++;
+            *swipes += 1;
             temp = array_ptr[i];
             array_ptr[i] = array_ptr[i + 1];
             array_ptr[i + 1] = temp;
@@ -140,17 +137,14 @@ std::pair<int, int> gnome_sort(int size, int *array_ptr)
             i++;
         }
     }
-    return std::pair<int, int>(swipes, iterations);
 }
 
-std::pair<int, int> hair_sort(int size, int *array_ptr)
+void hair_sort(int size, int *array_ptr, int *iterations, int *swipes)
 {
     int step = size - 1;
     bool flag = true;
     int i;
     int temp;
-    int iterations = 0;
-    int swipes = 0;
     while (step > 1 or flag)
     {
         if (step > 1)
@@ -161,17 +155,16 @@ std::pair<int, int> hair_sort(int size, int *array_ptr)
         i = 0;
         while (i + step < size)
         {
-            iterations++;
+            *iterations += 1;
             if (array_ptr[i] > array_ptr[i + step])
             {
                 temp = array_ptr[i];
                 array_ptr[i] = array_ptr[i + step];
                 array_ptr[i + step] = temp;
                 flag = true;
-                swipes++;
+                *swipes += 1;
             }
             i++;
         }
     }
-    return std::pair<int, int>(swipes, iterations);
 }
