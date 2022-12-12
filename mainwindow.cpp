@@ -179,6 +179,57 @@ QString MainWindow::table_function(int (*func)(int, int *))
     return "";
 }
 
+void MainWindow::search_function(int func, QString value)
+{
+    bool flag;
+    int number = value.toInt(&flag);
+    if (not flag)
+    {
+        QMessageBox::information(this, "Ошибка", "Данные для поиска не валидны, введите число");
+        return;
+    }
+    if (this->check() && this->check_numbers())
+    {
+        int index;
+        if (func == 1)
+        {
+            index = find_linear(this->size, this->array, number);
+        }
+        else if (func == 2)
+        {
+            if (is_sorted(this->size, this->array))
+            {
+                index = find_binary(this->size, this->array, number);
+            }
+            else
+            {
+                QMessageBox::information(this, "Ошибка", "Бинарный поиск возможен только в отсортированном массиве");
+                return;
+            }
+        }
+        else
+        {
+            if (is_sorted(this->size, this->array))
+            {
+                index = find_binary(this->size, this->array, number);
+            }
+            else
+            {
+                index = find_linear(this->size, this->array, number);
+            }
+        }
+        if (index == -1)
+        {
+            QMessageBox::information(this, "Ошибка", "Элемент не найден");
+        }
+        else
+        {
+            ui->tableWidget->item(0, index)->setBackground(Qt::green);
+            ui->tableWidget->scrollToItem(ui->tableWidget->item(0, index));
+        }
+    }
+}
+
 void MainWindow::on_pushButton_bubble_clicked()
 {
     this->table_function(bubble_sort);
@@ -247,5 +298,22 @@ void MainWindow::on_pushButton_max_clicked()
 void MainWindow::on_pushButton_avg_clicked()
 {
     ui->label_avg->setText(this->table_function(avg));
+}
+
+void MainWindow::on_pushButton_search_linear_clicked()
+{
+    this->search_function(1, ui->lineEdit_search_linear->text());
+}
+
+
+void MainWindow::on_pushButton_search_binary_clicked()
+{
+    this->search_function(2, ui->lineEdit_search_binary->text());
+}
+
+
+void MainWindow::on_pushButton_search_auto_clicked()
+{
+    this->search_function(3, ui->lineEdit_search_auto->text());
 }
 

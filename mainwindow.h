@@ -48,6 +48,12 @@ private slots:
 
     void on_pushButton_avg_clicked();
 
+    void on_pushButton_search_linear_clicked();
+
+    void on_pushButton_search_binary_clicked();
+
+    void on_pushButton_search_auto_clicked();
+
 private:
     Ui::MainWindow *ui;
     int array[200];
@@ -61,6 +67,7 @@ private:
     void setTable(int size);
     void table_function( void (*function) (int size, int *array_prt, int *iterations, int *swipes));
     void clear_counters();
+    void search_function(int func, QString value);
 
     QString table_function( int (*function) (int size, int *array_ptr));
 };
